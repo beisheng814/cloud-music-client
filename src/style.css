@@ -1,0 +1,114 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* 禁止文本鼠标滑动被选中 */
+.noselect {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE 10+/Edge */
+  user-select: none;
+}
+
+#app,
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+div {
+  box-sizing: border-box;
+}
+.color-grey {
+  color: #999999;
+}
+.cup {
+  cursor: pointer;
+}
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+.z-999 {
+  z-index: 999;
+}
+.z-1000 {
+  z-index: 1000;
+}
+.z-9999 {
+  z-index: 9999;
+}
+.z-10000 {
+  z-index: 10000;
+}
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0 12px;
+  height: 24px;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+/* 定义滚动条的基本样式 */
+::-webkit-scrollbar {
+  width: 8px; /* 滚动条的宽度 */
+  height: 8px;
+}
+
+/* 定义滚动条滑块的样式 */
+::-webkit-scrollbar-thumb {
+  background-color: rgba(136, 136, 136, 0.5); /* 滑块的背景颜色 */
+  border-radius: 5px; /* 滑块的圆角弧度 */
+}
+
+/* 定义滚动条轨道的样式 */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* 轨道的背景颜色 */
+  border-radius: 5px; /* 轨道的圆角弧度 */
+}
+
+/* 当滚动条处于被悬停状态时的样式 */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* 悬停时的背景颜色 */
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}

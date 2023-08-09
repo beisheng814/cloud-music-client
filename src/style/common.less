@@ -1,0 +1,238 @@
+@import "custom";
+
+//#########################reset默认#########################
+
+body, p, ul, ol, li, dl, dt, dd, h1, h2, h3, h4, h5, h6, input, select, textarea, button, th, td, img {
+  margin: 0;
+  padding: 0;
+}
+body {
+  font: 14px/1.6 "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  color: @text;
+}
+ul, ol, li {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+  color: @blue;
+  &:hover {
+    color: @primary;
+  }
+  //cursor: pointer;
+}
+
+//#########################颜色#########################
+
+// 主题背景色
+.bg-primary {
+  background: @primary !important;
+  color: white;
+  font-weight: 400;
+}
+//table-header-背景色
+.bg-gray {
+  background: #f9f9f9 !important;
+  font-weight: 400;
+}
+//白色背景
+.bg-white {
+  background: #fff !important;
+}
+
+// 文本颜色
+.text {
+  color: @text;
+}
+//主题色
+.primary {
+  color: @primary;
+}
+// 蓝色
+.blue {
+  color: @blue;
+}
+// 红色
+.red {
+  color: @red;
+}
+// 橙色
+.orange {
+  color: @orange;
+}
+// 灰色
+.gray {
+  color: @gray;
+}
+// 深色
+.dark {
+  color: @dark;
+}
+// 禁用色
+.disabled {
+  color: @disabled;
+}
+// 白色
+.white {
+  color: white;
+}
+
+//#########################字体#########################
+
+.font-l {
+  font-size: 16px;
+}
+.font-n {
+  font-size: 14px;
+}
+.font-s {
+  font-size: 12px;
+}
+.bold {
+  font-weight: bold;
+}
+.normal {
+  font-weight: normal;
+}
+
+// 文字不换行- 显示1行 - 溢出显示...
+.text-1 {
+  display: -webkit-box;
+  overflow: hidden;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+// 文字不换行- 显示2行 - 溢出显示...
+.text-2 {
+  display: -webkit-box;
+  overflow: hidden;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+//#########################布局定位#########################
+
+//相对定位
+.relative {
+  position: relative;
+}
+//绝对定位
+.absolute{
+  position: absolute;	
+}
+//粘性定位
+.sticky {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 400;
+}
+//水平垂直居中定位(父元素要是定位元素)
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+//行内块
+.ib {
+  display: inline-block;
+}
+//行内元素对齐
+.text-c {
+  text-align: center;
+}
+.text-l {
+  text-align: left;
+}
+.text-r {
+  text-align: right;
+}
+
+//#########################弹性布局#########################
+
+//纵向布局
+.flex-col {
+  flex-direction: column;
+}
+//横向翻转布局
+.flex-row-r {
+  flex-direction: row-reverse;
+}
+/*两边对齐弹性布局*/
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/*间隔相等弹性布局*/
+.flex-around {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+/*水平居中*/
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/*弹性布局从头排*/
+.flex-start {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+/*弹性布局从尾排*/
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+/*弹性布局项目缩放*/
+.flex-grow {
+  flex-grow: 1;
+}
+.flex-shrink {
+  flex-shrink: 0;
+}
+/*弹性布局换行*/
+.flex-wrap {
+  flex-wrap: wrap;
+}
+/*弹性布局文字不换行，溢出显示...*/
+.flex-1 {
+  flex: 1;
+  overflow: hidden;
+}
+//项目顶部对齐
+.align-start {
+  align-self: flex-start;
+}
+//项目尾部对齐
+.align-end {
+  align-self: flex-end;
+}
+
+//#########################其他补充#########################
+
+//鼠标手指
+.pointer {
+  cursor: pointer;
+  // &:hover {
+  //   color: @primary;
+  // }
+}
+//阴影
+.shadow {
+  box-shadow: 1px 1px 6px 0 rgba(0, 0, 0, 0.2);
+}
+//填充、响应式
+.res {
+  width: 100%;
+}
