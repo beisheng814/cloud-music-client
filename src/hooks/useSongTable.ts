@@ -61,6 +61,8 @@ export default function useSongTable(tableData: TableData) {
   }
 
   return {
+    userStore,
+    songStore,
     setRowClass,
     downloadMusic,
     likeSong,

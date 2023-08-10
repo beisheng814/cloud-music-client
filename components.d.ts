@@ -7,7 +7,6 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    Comments: typeof import('./src/components/Comments.vue')['default']
     CommentsItem: typeof import('./src/components/CommentsItem.vue')['default']
     Header: typeof import('./src/components/Header.vue')['default']
     HeaderSearch: typeof import('./src/components/HeaderSearch.vue')['default']

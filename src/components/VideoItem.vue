@@ -43,6 +43,8 @@
   const timer = ref()
   const { data } = toRefs(props)
   const handleMouseEnter = () => {
+    // 没有预览图直接返回
+    if (props.data.previewUrl) return
     const time = props.data.previewDurationms
     if (time) {
       clearTimeout(timer.value)

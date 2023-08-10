@@ -15,11 +15,17 @@
         <div class="left-content">
           <vue3videoPlay :src="videoUrl" width="640px" :muted="false" height="410px" volume="0.7" color="#ec4141" />
           <div class="creator-info flex-between">
-            <a-space>
+            <a-space v-if="videoOrMv === 'video'">
               <a-avatar>
                 <img alt="avatar" :src="data.creator.avatarUrl" />
               </a-avatar>
               <span>{{ data.creator.nickname }}</span>
+            </a-space>
+            <a-space v-else>
+              <a-avatar>
+                <img alt="avatar" :src="vInfo.artists[0].img1v1Url" />
+              </a-avatar>
+              <span v-for="(item, i) in vInfo.artists" :key="item.id"><template v-if="i">/</template> {{ item.name }} </span>
             </a-space>
             <div class="gz-btn">+ 关注</div>
           </div>
@@ -33,7 +39,7 @@
                 <span class="gray">播放：{{ numFormat(data.playTime) }} </span>
               </a-space>
             </div>
-            <div class="video-tag">
+            <div class="video-tag" v-if="videoOrMv === 'video'">
               <a-space>
                 <a-tag v-for="item in data.videoGroup" :key="item.id">{{ item.name }}</a-tag>
               </a-space>
@@ -90,7 +96,7 @@
 <script setup lang="ts">
   import { reactive, ref } from 'vue'
   import { numFormat } from '@/util/index'
-  import { getVideoDetailInfo, getVideoUrl } from '@/api/video'
+  import { getVideoDetailInfo, getVideoUrl, getMvDetail, getMvUrl, getMvDetailInfo } from '@/api/video'
   import vue3videoPlay from 'vue3-video-play' // 引入组件
   import 'vue3-video-play/dist/style.css'
   import { getComment } from '@/api/common'
@@ -102,6 +108,10 @@
   const type = ref(0)
   const vid = ref('')
   const videoUrl = ref('')
+  const vInfo = ref({
+    artists: [{ id: 1, img1v1Url: '', name: '' }]
+  })
+  const videoOrMv = ref('video')
   const pagParams = reactive({
     id: '' || 0,
     type: 0,
@@ -131,28 +141,53 @@
     shareCount: 0
   })
   const getVideo = () => {
-    getVideoUrl(vid.value).then(res => {
-      const { code, urls } = res
-      if (code === 200) {
-        videoUrl.value = urls[0].url
-      }
-    })
-    getVideoDetailInfo(vid.value).then(res => {
-      const { code, commentCount, liked, likedCount, shareCount } = res
-      if (code === 200) {
-        ;(videoDataInfo.commentCount = commentCount),
-          (videoDataInfo.liked = liked),
-          (videoDataInfo.likedCount = likedCount),
-          (videoDataInfo.shareCount = shareCount)
-      }
-    })
+    if (videoOrMv.value === 'video') {
+      getVideoUrl(vid.value).then(res => {
+        const { code, urls } = res
+        if (code === 200) {
+          videoUrl.value = urls[0].url
+        }
+      })
+      getVideoDetailInfo(vid.value).then(res => {
+        const { code, commentCount, liked, likedCount, shareCount } = res
+        if (code === 200) {
+          ;(videoDataInfo.commentCount = commentCount),
+            (videoDataInfo.liked = liked),
+            (videoDataInfo.likedCount = likedCount),
+            (videoDataInfo.shareCount = shareCount)
+        }
+      })
+    } else {
+      getMvDetail(vid.value).then(res => {
+        const { code, data } = res
+        if (code === 200) {
+          vInfo.value = data
+        }
+      })
+      getMvUrl(vid.value).then(res => {
+        const { code, data } = res
+        if (code === 200) {
+          videoUrl.value = data.url
+        }
+      })
+      getMvDetailInfo(vid.value).then(res => {
+        const { code, commentCount, liked, likedCount, shareCount } = res
+        if (code === 200) {
+          ;(videoDataInfo.commentCount = commentCount),
+            (videoDataInfo.liked = liked),
+            (videoDataInfo.likedCount = likedCount),
+            (videoDataInfo.shareCount = shareCount)
+        }
+      })
+    }
   }
   const handleCancel = () => {
     visible.value = false
     videoUrl.value = ''
   }
-  const show = (item: any, t: number) => {
+  const show = (item: any, t: number, vom: string = 'video') => {
     data.value = item
+    videoOrMv.value = vom
     type.value = t
     vid.value = item.vid
     pagParams.id = item.vid

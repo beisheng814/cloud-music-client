@@ -1,30 +1,36 @@
 <template>
-  <div class="search-box">
-    <div class="search-top">
-      <h2>搜索 {{ searchStr }}</h2>
-    </div>
-    <div class="search-content">
-      <div class="tabs noselect">
-        <ul>
-          <li v-for="item in tabsType" :key="item.value" :class="tabsIndex === item.value ? 'active-li cup' : 'cup'" @click="changeTabs(item.value)">
-            {{ item.name }}
-          </li>
-        </ul>
-        <span class="tip">找到{{ tabsSum }}</span>
+  <div class="scroll-box" ref="scrollBoxRef">
+    <div class="search-box">
+      <div class="search-top">
+        <h2>搜索 {{ searchStr }}</h2>
       </div>
-      <Single v-if="tabsIndex === 1" :keywords="searchStr" />
+      <div class="search-content">
+        <div class="tabs noselect">
+          <ul>
+            <li v-for="item in tabsType" :key="item.value" :class="tabsIndex === item.value ? 'active-li cup' : 'cup'" @click="changeTabs(item.value)">
+              {{ item.name }}
+            </li>
+          </ul>
+          <span class="tip">{{ totalStr }}</span>
+        </div>
+        <Single v-if="tabsIndex === 1" :keywords="searchStr" @scrollTop="setScrollTop" @total-str="setTotalStr" />
+        <Singer v-if="tabsIndex === 100" :keywords="searchStr" :type="100" @scrollTop="setScrollTop" @total-str="setTotalStr" />
+        <Video v-if="tabsIndex === 1014" :keywords="searchStr" :type="1014" @scrollTop="setScrollTop" @total-str="setTotalStr" />
+      </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-  import { ref, onMounted, watchEffect } from 'vue'
+  import { ref, watchEffect } from 'vue'
   import { useRoute } from 'vue-router'
   import Single from './components/Single.vue'
+  import Singer from './components/Singer.vue'
+  import Video from './components/Video.vue'
 
   const route = useRoute()
   const searchStr = ref('')
   const tabsIndex = ref(1)
-  const tabsSum = ref('211首单曲')
+  const totalStr = ref('')
   const tabsType = [
     { name: '单曲', value: 1 },
     { name: '歌手', value: 100 },
@@ -40,14 +46,26 @@
     const { searchData } = route.query as any
     searchStr.value = searchData
     tabsIndex.value = 1
-    console.log(searchStr.value, '333')
   })
   const changeTabs = (val: number) => {
     tabsIndex.value = val
+    totalStr.value = ''
   }
-  onMounted(() => {})
+  const setTotalStr = (val: string) => {
+    totalStr.value = val
+  }
+  const scrollBoxRef = ref()
+  // 将一个元素滚动条到顶部
+  const setScrollTop = () => {
+    scrollBoxRef.value.scrollTop = 0
+  }
 </script>
 <style lang="less" scoped>
+  .scroll-box {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+  }
   .search-box {
     padding: 20px;
     .search-top {

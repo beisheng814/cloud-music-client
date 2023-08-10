@@ -73,7 +73,7 @@ function createLrcWindow(routerPath) {
     hash: routerPath
   })
   if (process.env.VITE_DEV_SERVER_URL) {
-    lrcWindow.webContents.openDevTools()
+    if (lrcWindow) lrcWindow.webContents.openDevTools()
   }
   // 载入 Vue 应用的 HTML 文件，并指定子路由的 hash 值
   lrcWindow.loadURL(filePath)
@@ -100,13 +100,13 @@ ipcMain.handle('create-new-window', (_, routerPath) => {
 })
 // 播放时间变化
 ipcMain.handle('change-current-time', (_, flag, time) => {
-  if (flag) {
+  if (flag && lrcWindow) {
     lrcWindow?.webContents.send('change-current-time', time)
   }
 })
 // 设置歌词窗口数据
 ipcMain.handle('set-lrc-win-data', (_, isPlay, songId, lrc) => {
-  lrcWindow?.webContents.send('get-lrc-win-data', isPlay, songId, lrc)
+  if (lrcWindow) lrcWindow?.webContents.send('get-lrc-win-data', isPlay, songId, lrc)
 })
 
 async function createWindow() {
@@ -241,7 +241,7 @@ function setIpc() {
     // 设置托盘显示文本
     tray.setToolTip(title)
     // 托盘菜单歌曲信息
-    trayMenuWindow?.webContents.send('set-tray-menu-title', title)
+    if (trayMenuWindow) trayMenuWindow?.webContents.send('set-tray-menu-title', title)
   })
   // 上一首下一首
   ipcMain.handle('switch-songs', (_, type) => {
@@ -249,7 +249,7 @@ function setIpc() {
   })
   // 托盘菜单数据状态
   ipcMain.handle('set-tray-menu-status', (_, isPlay, desktopLrc, mode) => {
-    trayMenuWindow?.webContents.send('get-tray-menu-status', isPlay, desktopLrc, mode)
+    if (trayMenuWindow) trayMenuWindow?.webContents.send('get-tray-menu-status', isPlay, desktopLrc, mode)
   })
   // 打开/关闭桌面歌词
   ipcMain.handle('toggle-lrc-show', (_, flag) => {
@@ -293,7 +293,7 @@ function setTray() {
   trayMenuWindow.loadURL(filePath)
   tray.on('right-click', () => {
     if (process.env.VITE_DEV_SERVER_URL) {
-      trayMenuWindow.webContents.openDevTools()
+      if (trayMenuWindow) trayMenuWindow.webContents.openDevTools()
     }
     const position = tray.getBounds()
     const { x, y } = position

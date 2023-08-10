@@ -8,6 +8,9 @@
     :pagination="pagination"
     page-position="bottom"
     @page-change="onPageChange"
+    :expanded-keys="expandedKeys"
+    :default-expand-all-rows="true"
+    row-key="id"
     :row-class="setRowClass"
     @cell-dblclick="cellDblclick"
   >
@@ -15,7 +18,11 @@
       <a-table-column :width="60">
         <template #cell="{ record: { id }, rowIndex }">
           <icon-sound-fill v-if="id == songStore.getSongId" style="color: #ec4141" />
-          <span v-else>{{ rowIndex < 9 ? '0' + (rowIndex + 1) : rowIndex + 1 }}</span>
+          <span v-else>{{
+            rowIndex + 1 + (pagination.current - 1) * pagination.pageSize < 9
+              ? '0' + (rowIndex + 1)
+              : rowIndex + 1 + (pagination.current - 1) * pagination.pageSize
+          }}</span>
         </template>
       </a-table-column>
       <a-table-column title="操作" ellipsis tooltip :width="80">
@@ -54,65 +61,52 @@
         </template>
       </a-table-column>
     </template>
+    <template #expand-row="{ record }">
+      <div class="search-lyrics-row text-1" v-if="record.lyrics">歌词：<span v-for="item in record.lyrics" v-html="item" :style="{color: item.includes('<b>') ? '#ec4141' : ''}"></span></div>
+    </template>
   </a-table>
 </template>
 <script setup lang="ts">
-  import { ref, onMounted, reactive, computed, watch } from 'vue'
-  import { getSearch } from '@/api/search'
-  import { useSongStore, useUserStore } from '@/store'
+  import { ref, onMounted, watch } from 'vue'
   import { formatTime } from '@/util/index'
   import { TableData } from '@arco-design/web-vue'
   import useSongTable from '@/hooks/useSongTable'
+  import useSearch from '@/hooks/useSearch'
 
-  const songStore = useSongStore()
-  const userStore = useUserStore()
+  const tableData = ref<TableData[]>([])
+  const expandedKeys = ref<number[]>([])
+  const { userStore, songStore, setRowClass, downloadMusic, likeSong, cellDblclick } = useSongTable(tableData)
+  const emit = defineEmits(['scrollTop', 'totalStr'])
   const props = defineProps({
     keywords: {
       type: String,
       default: ''
+    },
+    type: {
+      type: Number,
+      default: 1
     }
   })
-  const tableData = ref<TableData[]>([])
-  const pagination = reactive({
-    current: 1,
-    pageSize: 30,
-    total: 0
-  })
-  const params = computed(() => {
-    return {
-      keywords: props.keywords,
-      limit: pagination.pageSize,
-      offset: (pagination.current - 1) * pagination.pageSize
+  const { codes, results, loading, pagination, onPageChange, getTable } = useSearch(props)
+  watch(results, () => {
+    if (codes.value === 200) {
+      emit('scrollTop')
+      expandedKeys.value = []
+      tableData.value = results.value.songs
+      results.value.songs.forEach((item: TableData) => {
+       if (item.lyrics) {
+        expandedKeys.value.push(item.id)
+       }})
+      pagination.total = results.value.songCount
+      emit('totalStr', `找到${results.value.songCount}首单曲`)
     }
   })
-  const loading = ref(false)
-  const { setRowClass, downloadMusic, likeSong, cellDblclick } = useSongTable(tableData)
-  const getTable = () => {
-    loading.value = true
-    getSearch(params.value)
-      .then(res => {
-        const { code, result } = res
-        if (code === 200) {
-          tableData.value = result.songs
-          pagination.total = result.songCount
-        }
-      })
-      .finally(() => {
-        loading.value = false
-      })
-  }
-  const onPageChange = (page: number) => {
-    pagination.current = page
-    getTable()
-  }
-  watch(
-    () => props.keywords,
-    () => {
-      getTable()
-    }
-  )
   onMounted(() => {
     getTable()
   })
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.search-lyrics-row {
+  margin-left: 60px;
+}
+</style>
