@@ -6,6 +6,7 @@ const useSongStore = defineStore('song', {
     return {
       currentTime: 0,
       isPlay: false,
+      currentIndex: 0,
       currentMode: 'lb',
       // 歌单id
       detailSongId: 0,
@@ -28,6 +29,7 @@ const useSongStore = defineStore('song', {
     getCurrentTime: state => state.currentTime,
     getIsPlay: state => state.isPlay,
     getCurrentMode: state => state.currentMode,
+    getCurrentIndex: state => state.currentIndex,
     getLrcArr: state => state.lrcArr,
     getDetailSongId: state => state.detailSongId,
     getSongId: state => state.songId,
@@ -43,6 +45,9 @@ const useSongStore = defineStore('song', {
     },
     setCurrentTime(currentTime: number) {
       this.currentTime = currentTime
+    },
+    setCurrentIndex(currentIndex: number) {
+      this.currentIndex = currentIndex
     },
     setCurrentMode(currentMode: string) {
       this.currentMode = currentMode

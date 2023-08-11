@@ -1,6 +1,14 @@
 import { get } from '@/http'
 
 /**
+ *  获取歌曲详情
+ *  说明 : 调用此接口 , 传入音乐 id(支持多个 id, 用 , 隔开), 可获得歌曲详情(dt为歌曲时长)
+ *  必选参数 : ids: 音乐 id, 如 ids=347230
+ */
+ export function getSongDetail(ids: number | string) {
+  return get(`/song/detail`, {ids})
+}
+/**
  *  获取音乐 url - 新版
  *  传入的音乐 id( 可多个 , 用逗号隔开 ), 可以获取对应的音乐的 url,未登录状态或者非会员返回试听片段(返回字段包含被截取的正常歌曲的开始时间和结束时间)
  *  必选参数 : id : 音乐 id level: 播放音质等级, 分为 standard => 标准,higher => 较高, exhigh=>极高, lossless=>无损, hires=>Hi-Res, jyeffect => 高清环绕声, sky => 沉浸环绕声, jymaster => 超清母带

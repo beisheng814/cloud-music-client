@@ -2,6 +2,7 @@ export interface SongType {
   currentTime: number
   isPlay: boolean
   currentMode: string
+  currentIndex: number
   // 歌单id
   detailSongId: number
   // 当前播放歌曲id

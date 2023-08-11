@@ -402,6 +402,7 @@
         index.value = i
       }
     })
+    songStore.setCurrentIndex(index.value)
     info.value = {
       url: '',
       artist: playData.value[index.value].ar.map((item: any) => item.name).join(' / '),

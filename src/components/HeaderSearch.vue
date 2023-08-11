@@ -29,14 +29,14 @@
           <div class="search-history" v-if="searchHistory.length">
             <div class="search-history-hot-title">搜索历史</div>
             <a-space wrap>
-              <a-tag v-for="(tag, index) of searchHistory" :key="index">
-                <a-space>{{ tag }} <icon-close style="cursor: pointer" @click="tagRemove(index)" /></a-space>
+              <a-tag v-for="(tag, index) of searchHistory" :key="index" @click="changeSearch(tag)" style="cursor: pointer">
+                <a-space>{{ tag }} <icon-close style="cursor: pointer" @click.stop="tagRemove(index)" /></a-space>
               </a-tag>
             </a-space>
           </div>
           <div class="search-hot">
             <div class="search-history-hot-title">热搜榜</div>
-            <div class="search-hot-item" v-for="(item, i) in searchHotData" :key="i" @click="changeHotSearch(item.searchWord)">
+            <div class="search-hot-item" v-for="(item, i) in searchHotData" :key="i" @click="changeSearch(item.searchWord)">
               <div class="index" :style="{ color: i < 3 ? '#ec4141' : '#bcbcbc' }">{{ i + 1 }}</div>
               <div class="data">
                 <div class="data-top">
@@ -60,12 +60,15 @@
 <script setup lang="ts">
   import { ref, onMounted, computed, watch } from 'vue'
   import { getSearchDefault, getSearchHotDetail, getSearchSuggest } from '@/api/search'
-  import { useUserStore } from '@/store'
+  import { useUserStore, useSongStore } from '@/store'
   import { debounce } from 'lodash'
   import { useRouter } from 'vue-router'
-  const router = useRouter()
+  import useNextPlay from '@/hooks/useNextPlay'
+  import { getSongDetail } from '@/api/song'
 
+  const router = useRouter()
   const userStore = useUserStore()
+  const songStore = useSongStore()
   const searchData = ref('')
   // 是否是建议列表
   const isSuggest = ref(false)
@@ -129,7 +132,10 @@
     const query = {
       searchData: searchData.value
     }
-    userStore.setSearchHistoryList([searchData.value, ...searchHistory.value])
+    // 添加到搜索历史列表中
+    if (!searchHistory.value.includes(searchData.value)) {
+      userStore.setSearchHistoryList([searchData.value, ...searchHistory.value])
+    }
     router.push({ name: 'SearchDetail', query })
   }, 500)
   const tagRemove = (index: number) => {
@@ -137,22 +143,31 @@
     tags.splice(index, 1)
     userStore.setSearchHistoryList(tags)
   }
-  const changeHotSearch = (val: string) => {
+  const changeSearch = (val: string) => {
     searchData.value = val
     search()
   }
 
-  const goPage = (v: defaultType) => {
+  const goPage = debounce((v: defaultType) => {
     if (v.artists) {
-      console.log('单曲', v)
+      // console.log('单曲', v)
+      getSongDetail(v.id).then(res => {
+        const { code, songs } = res
+        if (code === 200) {
+          const song = songs[0]
+          useNextPlay(song)
+        }
+      })
     } else if (v.artist) {
       console.log('专辑', v)
     } else if (v.coverImgUrl) {
-      console.log('歌单', v)
+      // console.log('歌单', v)
+      songStore.setDetailSongId(v.id)
+      router.push({ name: 'SongList' })
     } else if (v.picUrl) {
       console.log('歌手', v)
     }
-  }
+  }, 1000)
   interface searchHotType {
     searchWord: string
     content: string
