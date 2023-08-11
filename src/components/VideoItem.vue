@@ -11,8 +11,11 @@
       <div class="title text-1">
         {{ data.title }}
       </div>
-      <div class="name">
+      <div class="name" v-if="type === 'video'">
         by <span> {{ data.creator.nickname }}</span>
+      </div>
+      <div class="name" v-else>
+        <span v-for="(item,i) in data.creator" :key="item.userId"><template v-if="i">/</template> {{ item.userName }}</span>
       </div>
     </div>
   </div>
@@ -37,6 +40,11 @@
       type: Object as () => Item,
       required: true,
       default: () => ({ name: 'Default Item' })
+    },
+    type: {
+      type: String,
+      required: true,
+      default: 'video'
     }
   })
   const playBtnRef = ref()

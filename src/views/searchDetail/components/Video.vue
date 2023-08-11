@@ -2,7 +2,7 @@
   <a-spin :loading="loading" tip="加载中...">
     <div class="video-content">
       <template v-for="(item, i) in videoData" :key="item.vid + i">
-        <VideoItem :data="item" class="cup" @click="goVideoDetail(item, 1)" />
+        <VideoItem :data="item" :type="'mv'" class="cup" @click="goVideoDetail(item, 1)" />
       </template>
     </div>
     <VideoDetailModel ref="videoDetailRef" />

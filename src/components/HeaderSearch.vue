@@ -28,6 +28,11 @@
         <div class="search-history-hot noselect" v-else>
           <div class="search-history" v-if="searchHistory.length">
             <div class="search-history-hot-title">搜索历史</div>
+            <a-space wrap>
+              <a-tag v-for="(tag, index) of searchHistory" :key="index">
+                <a-space>{{ tag }} <icon-close style="cursor: pointer" @click="tagRemove(index)" /></a-space>
+              </a-tag>
+            </a-space>
           </div>
           <div class="search-hot">
             <div class="search-history-hot-title">热搜榜</div>
@@ -99,7 +104,11 @@
       getSearchSuggest({ keywords }).then(res => {
         const { code, result } = res
         if (code === 200) {
-          isSuggest.value = true
+          if (result.order) {
+            isSuggest.value = true
+          } else {
+            isSuggest.value = false
+          }
           suggestData.value = result
         }
       })
@@ -110,6 +119,7 @@
   // 搜索文本改变 显示建议
   watch(searchData, suggest)
   // 搜索
+  const searchHistory = computed(() => userStore.getSearchHistoryList)
   const search = debounce(function () {
     visible.value = false
     // 空值直接搜索将默认值作为搜索条件
@@ -119,8 +129,14 @@
     const query = {
       searchData: searchData.value
     }
+    userStore.setSearchHistoryList([searchData.value, ...searchHistory.value])
     router.push({ name: 'SearchDetail', query })
   }, 500)
+  const tagRemove = (index: number) => {
+    const tags = [...searchHistory.value]
+    tags.splice(index, 1)
+    userStore.setSearchHistoryList(tags)
+  }
   const changeHotSearch = (val: string) => {
     searchData.value = val
     search()
@@ -142,7 +158,6 @@
     content: string
     score: string
   }
-  const searchHistory = computed(() => userStore.getSearchHistoryList)
   const searchHotData = ref<searchHotType[]>([])
   // 获取默认数据 热搜/关键字
   const getSearchDefaultData = () => {
